@@ -1,0 +1,1 @@
+//internet var mı kontrol
