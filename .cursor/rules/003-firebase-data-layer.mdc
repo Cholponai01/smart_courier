@@ -1,0 +1,45 @@
+---
+description: Firebase, Firestore, and Stripe conventions for the data layer
+globs: lib/**/data/**/*.dart, **/*.rules, functions/**/*.js
+alwaysApply: false
+---
+
+# Firebase & Data Layer Rules
+
+## Where things live
+- Firestore/Stripe/Auth calls exist ONLY inside `data/` classes that implement
+  a `domain/` repository interface. Never call `FirebaseFirestore.instance`
+  or `FirebaseAuth.instance` from a Bloc, use case, or widget.
+- Stripe secret keys and payment-capture logic live only in Cloud Functions.
+  The client only ever calls a callable function — never a Stripe secret
+  endpoint directly.
+
+## Firestore access patterns
+- Every write from the client must be shaped so a Security Rule can validate
+  it (e.g., `customerId` is always `request.auth.uid`, never client-chosen
+  for another user).
+- Prefer transactions (`runTransaction`) for any read-then-write that must be
+  atomic (e.g., accepting an order — see `acceptOrderTxn`).
+- Admin-only reads are gated by Firebase Auth custom claims
+  (`request.auth.token.admin == true`) in Security Rules — never by a
+  client-readable `role` field alone.
+
+## Mapping
+- Every Firestore document has an explicit DTO class + `fromFirestore` /
+  `toFirestore` mapping. Never pass raw `Map<String, dynamic>` above the
+  data layer.
+- Timestamps are converted to `DateTime` at the mapping boundary — domain
+  and presentation never see `Timestamp`.
+
+## Error handling
+- Wrap every Firebase call in try/catch; map `FirebaseException` /
+  `FirebaseAuthException` to the sealed `Failure` type from
+  `001-architecture-clean-code.mdc`. Never let a raw platform exception
+  escape the data layer.
+
+## Security Rules file
+- Every new collection or field access pattern added to the app must have a
+  corresponding rule added to `firestore.rules` in the same PR — the rules
+  file is source of truth, not an afterthought.
+- No rule should read `allow read, write: if true;` even temporarily —
+  use the Firebase Emulator for local testing instead of loosening prod rules.

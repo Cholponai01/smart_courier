@@ -1,0 +1,53 @@
+---
+description: Clean Architecture, feature-first structure, SOLID and Clean Code standards for Smart Courier
+globs: lib/**/*.dart
+alwaysApply: true
+---
+
+# Architecture & Clean Code
+
+## Layering (Clean Architecture, feature-first)
+- Structure: `lib/features/<feature>/{data,domain,presentation}/`.
+- `domain/` is pure Dart: entities, abstract repositories, use cases.
+  NEVER import `package:firebase_*`, `package:flutter/*`, or any SDK there.
+- `data/` implements domain repository interfaces; owns Firebase/Stripe/DTOs/mappers.
+- `presentation/` (widgets, Bloc/Cubit) depends on `domain` only, never on `data` directly.
+- Dependency direction is always inward: presentation → domain ← data.
+- Cross-feature imports go through `domain` interfaces only, never `data` internals.
+
+## SOLID, applied concretely
+- **S**: one class = one reason to change. If a Bloc both formats dates AND calls
+  Firestore AND validates input, split it.
+- **O**: new courier-matching strategy? Add a new class behind the existing
+  interface — do not add `if (strategy == 'x')` branches to existing classes.
+- **L**: any `Repository` implementation must be fully substitutable for another
+  (e.g., swapping `LocationRepositoryImpl` for a native-tracking version in
+  Phase 2 must require zero changes above the domain layer).
+- **I**: prefer several small repository interfaces over one god-interface
+  (e.g., `OrderReader` / `OrderWriter` if a class only needs one side).
+- **D**: presentation and domain depend on abstractions (`abstract class
+  OrderRepository`), never on concrete Firebase classes. Wire concretes via
+  `get_it` only, in `core/di/injection.dart`.
+
+## Clean Code rules (non-negotiable)
+- Functions: max ~25 lines. If longer, extract a private helper.
+- Classes: max ~200 lines. If longer, it's doing more than one job — split it.
+- Naming: full words, no abbreviations (`courierLocation`, not `crLoc`).
+  Booleans read as questions (`isActive`, `hasArrived`).
+- No magic numbers/strings. Constants live in
+  `core/constants/` or a feature's own `constants.dart`.
+- No nested ternaries. Max one level of `?:`; otherwise use if/else or a
+  named helper function.
+- No `print()`. Use the project logger (`core/logging/`).
+- Immutability: domain entities and Bloc states use `Equatable` (or
+  `freezed`) and are `final`/const-constructible. No mutable public fields.
+- Errors are typed: data-layer throws are caught and mapped to a sealed
+  `Failure` (`NetworkFailure`, `AuthFailure`, `ValidationFailure`,
+  `UnknownFailure`) before reaching the Bloc. Presentation never catches
+  raw `FirebaseException`.
+- DRY, but do not over-abstract a pattern used only once — duplication of
+  2 call sites is cheaper than a wrong abstraction (YAGNI).
+
+## Formatting
+- `dart format .` and `flutter analyze` must be clean before any commit.
+- Line length 80 (project default, do not override).
