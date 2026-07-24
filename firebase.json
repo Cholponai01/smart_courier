@@ -1,0 +1,33 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "smart-courier-dev",
+          "appId": "1:90305168161:android:1812d825f8207c60f0b460",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "smart-courier-dev",
+          "appId": "1:90305168161:ios:ba400b67ee53f77bf0b460",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "smart-courier-dev",
+          "configurations": {
+            "android": "1:90305168161:android:1812d825f8207c60f0b460",
+            "ios": "1:90305168161:ios:ba400b67ee53f77bf0b460"
+          }
+        }
+      }
+    }
+  }
+}

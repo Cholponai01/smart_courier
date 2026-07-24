@@ -1,0 +1,40 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId) && isValidUserCreate();
+
+      allow update: if isOwner(userId) && isValidUserUpdate();
+
+      allow delete: if false;
+    }
+  }
+}
+
+function isOwner(userId) {
+  return request.auth != null && request.auth.uid == userId;
+}
+
+function isValidUserCreate() {
+  let data = request.resource.data;
+
+  return data.keys().hasAll(['name', 'phone', 'role', 'createdAt'])
+    && data.name is string
+    && data.phone is string
+    && data.role == 'customer'
+    && data.createdAt is timestamp
+    && data.keys().hasOnly(['name', 'phone', 'role', 'createdAt']);
+}
+
+function isValidUserUpdate() {
+  let data = request.resource.data;
+  let existing = resource.data;
+
+  return data.role == existing.role
+    && data.name is string
+    && data.phone is string
+    && data.createdAt == existing.createdAt;
+}

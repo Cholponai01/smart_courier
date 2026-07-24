@@ -1,0 +1,43 @@
+---
+description: Apply when creating or modifying a use case, repository, Bloc, or screen — testing is not optional
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# Testing Requirements
+
+Every new unit of logic ships with its test in the same PR. No exceptions
+for "I'll add tests later" — untested code does not merge to `main`.
+
+## Use cases (domain)
+- Plain `flutter_test`, no widget pump, no Firebase.
+- Mock the repository interface with `mocktail`.
+- Cover: happy path, at least one failure path (e.g., repository throws).
+
+## Repositories (data)
+- Test against a faked data source, not real Firebase.
+- Cover the mapping logic (DTO → entity) explicitly — this is where bugs hide.
+
+## Bloc (presentation logic)
+- Use `bloc_test`'s `blocTest()`.
+- Assert the exact state sequence for a given event sequence.
+- Cover: loading → success, loading → failure, and any guard conditions
+  (e.g., blocking a duplicate submit while already loading).
+
+## Widgets
+- One test per meaningful Bloc state the screen renders (loading / error /
+  success), using a fake Bloc (`whenListen` / mocked Bloc) — do not re-test
+  business logic already covered at the Bloc level.
+
+## Integration
+- One `integration_test` per core end-to-end flow (see SRS), run against the
+  Firebase Emulator Suite — never against the real `dev`/`prod` project.
+
+## Naming & structure
+- Test file mirrors source path: `lib/features/auth/domain/login_use_case.dart`
+  → `test/features/auth/domain/login_use_case_test.dart`.
+- Test descriptions read as behavior, not implementation:
+  `'emits Authenticated when credentials are valid'`, not `'test login'`.
+
+## Coverage bar (Phase 1 targets — see Volume 5)
+- Domain ≥ 85%, Data ≥ 70%, Bloc ≥ 80% of transitions, ≥1 widget test/screen.

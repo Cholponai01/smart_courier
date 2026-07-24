@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "90305168161",
+    "project_id": "smart-courier-dev",
+    "storage_bucket": "smart-courier-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90305168161:android:1812d825f8207c60f0b460",
+        "android_client_info": {
+          "package_name": "com.example.smart_courier"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBj_beU-iWQ08bk4McTehPnMl6lfIQeDVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,18 @@
+---
+description: Git branching and commit conventions
+globs:
+alwaysApply: true
+---
+
+# Git & Commit Rules
+
+- Branch naming: `feature/<short-name>`, `fix/<short-name>`, off `main`.
+- Never commit directly to `main`.
+- Commit format (Conventional Commits):
+  `type(scope): short imperative summary`
+  Types: `feat`, `fix`, `test`, `docs`, `refactor`, `chore`.
+  Example: `feat(auth): add login use case with unit tests`
+- One logical change per commit. Do not mix a feature and an unrelated
+  formatting pass in the same commit.
+- A commit that adds a Bloc/use case without its test is incomplete — it
+  should not be proposed as "done" (see `002-testing.mdc`).

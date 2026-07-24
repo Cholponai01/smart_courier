@@ -1,0 +1,29 @@
+{
+  "@@locale": "en",
+  "appTitle": "Smart Courier",
+  "signIn": "Sign in",
+  "createAccount": "Create account",
+  "email": "Email",
+  "password": "Password",
+  "name": "Name",
+  "phone": "Phone",
+  "login": "Login",
+  "register": "Register",
+  "createAnAccount": "Create an account",
+  "emailRequired": "Email is required",
+  "passwordRequired": "Password is required",
+  "nameRequired": "Name is required",
+  "phoneRequired": "Phone is required",
+  "customerHome": "Customer Home",
+  "courierHome": "Courier Home",
+  "adminHome": "Admin Home",
+  "signedInAs": "Signed in as {email}",
+  "@signedInAs": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "logout": "Logout"
+}
