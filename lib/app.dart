@@ -42,18 +42,6 @@ class _SmartCourierAppState extends State<SmartCourierApp> {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         routerConfig: _router,
-        builder: (context, child) {
-          return BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              if (state is AuthInitial) {
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                );
-              }
-              return child ?? const SizedBox.shrink();
-            },
-          );
-        },
       ),
     );
   }

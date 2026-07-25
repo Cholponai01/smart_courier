@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:smart_courier/core/error/failure.dart';
 import 'package:smart_courier/core/logging/app_logger.dart';
+import 'package:smart_courier/core/utils/result.dart';
 import 'package:smart_courier/features/auth/domain/entities/user.dart';
 import 'package:smart_courier/features/auth/domain/use_cases/get_current_user_use_case.dart';
 import 'package:smart_courier/features/auth/domain/use_cases/login_use_case.dart';
@@ -39,21 +39,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthCheckRequested event,
     Emitter<AuthState> emit,
   ) async {
-    _emitState(emit, const AuthLoading());
-    try {
-      final user = await _getCurrentUserUseCase();
-      if (user == null) {
-        _emitState(emit, const Unauthenticated());
-        return;
-      }
-      _emitState(emit, Authenticated(user));
-    } on Failure catch (failure) {
-      _emitState(emit, AuthError(failure.message));
-    } catch (_) {
-      _emitState(
-        emit,
-        const AuthError('Something went wrong. Please try again.'),
-      );
+    _emitState(emit, const AuthChecking());
+    final result = await _getCurrentUserUseCase();
+    switch (result) {
+      case Success(:final data):
+        if (data == null) {
+          _emitState(emit, const Unauthenticated());
+          return;
+        }
+        _emitState(emit, Authenticated(data));
+      case ResultFailure(:final failure):
+        _emitState(emit, AuthError(failure.message));
     }
   }
 
@@ -62,19 +58,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     _emitState(emit, const AuthLoading());
-    try {
-      final user = await _loginUseCase(
-        email: event.email,
-        password: event.password,
-      );
-      _emitState(emit, Authenticated(user));
-    } on Failure catch (failure) {
-      _emitState(emit, AuthError(failure.message));
-    } catch (_) {
-      _emitState(
-        emit,
-        const AuthError('Something went wrong. Please try again.'),
-      );
+    final result = await _loginUseCase(
+      email: event.email,
+      password: event.password,
+    );
+    switch (result) {
+      case Success(:final data):
+        _emitState(emit, Authenticated(data));
+      case ResultFailure(:final failure):
+        _emitState(emit, AuthError(failure.message));
     }
   }
 
@@ -83,21 +75,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     _emitState(emit, const AuthLoading());
-    try {
-      final user = await _registerUseCase(
-        email: event.email,
-        password: event.password,
-        name: event.name,
-        phone: event.phone,
-      );
-      _emitState(emit, Authenticated(user));
-    } on Failure catch (failure) {
-      _emitState(emit, AuthError(failure.message));
-    } catch (_) {
-      _emitState(
-        emit,
-        const AuthError('Something went wrong. Please try again.'),
-      );
+    final result = await _registerUseCase(
+      email: event.email,
+      password: event.password,
+      name: event.name,
+      phone: event.phone,
+    );
+    switch (result) {
+      case Success(:final data):
+        _emitState(emit, Authenticated(data));
+      case ResultFailure(:final failure):
+        _emitState(emit, AuthError(failure.message));
     }
   }
 
@@ -106,16 +94,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     _emitState(emit, const AuthLoading());
-    try {
-      await _logoutUseCase();
-      _emitState(emit, const Unauthenticated());
-    } on Failure catch (failure) {
-      _emitState(emit, AuthError(failure.message));
-    } catch (_) {
-      _emitState(
-        emit,
-        const AuthError('Something went wrong. Please try again.'),
-      );
+    final result = await _logoutUseCase();
+    switch (result) {
+      case Success():
+        _emitState(emit, const Unauthenticated());
+      case ResultFailure(:final failure):
+        _emitState(emit, AuthError(failure.message));
     }
   }
 

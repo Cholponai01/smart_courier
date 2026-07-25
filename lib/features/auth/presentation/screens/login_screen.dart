@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_courier/core/router/app_routes.dart';
 import 'package:smart_courier/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:smart_courier/features/auth/presentation/validators/auth_validators.dart';
+import 'package:smart_courier/features/auth/presentation/widgets/auth_form_field.dart';
+import 'package:smart_courier/features/auth/presentation/widgets/auth_password_field.dart';
 import 'package:smart_courier/l10n/app_localizations.dart';
-import 'package:smart_courier/widgets/app_text_field.dart';
 import 'package:smart_courier/widgets/loading_button.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,11 +20,46 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+  var _passwordResetHintShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _maybeShowPasswordResetHint(),
+    );
+  }
+
+  void _maybeShowPasswordResetHint() {
+    if (_passwordResetHintShown || !mounted) {
+      return;
+    }
+
+    final router = GoRouter.maybeOf(context);
+    if (router == null) {
+      return;
+    }
+
+    final queryParams = router.state.uri.queryParameters;
+    if (queryParams[AppRoutes.passwordResetQueryParam] != '1') {
+      return;
+    }
+
+    _passwordResetHintShown = true;
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(l10n.signInWithNewPassword)));
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -64,28 +101,50 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AppTextField(
+                  AuthFormField(
                     fieldKey: const Key('login_email_field'),
                     controller: _emailController,
+                    focusNode: _emailFocusNode,
                     labelText: l10n.email,
                     keyboardType: TextInputType.emailAddress,
-                    validator: (value) => AppTextField.validateRequired(
+                    autofillHints: const [AutofillHints.email],
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) =>
+                        FocusScope.of(context).requestFocus(_passwordFocusNode),
+                    validator: (value) => AuthValidators.validateEmail(
                       value,
-                      l10n.emailRequired,
+                      requiredMessage: l10n.emailRequired,
+                      invalidMessage: l10n.invalidEmailFormat,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  AppTextField(
+                  AuthPasswordField(
                     fieldKey: const Key('login_password_field'),
                     controller: _passwordController,
+                    focusNode: _passwordFocusNode,
                     labelText: l10n.password,
-                    obscureText: true,
-                    validator: (value) => AppTextField.validateRequired(
+                    autofillHints: const [AutofillHints.password],
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _submit(),
+                    validator: (value) => AuthValidators.validateRequired(
                       value,
                       l10n.passwordRequired,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      key: const Key('login_forgot_password_link'),
+                      onPressed: isLoading
+                          ? null
+                          : () => context.push(AppRoutes.forgotPassword),
+                      child: Text(
+                        l10n.forgotPassword,
+                        style: textTheme.bodyLarge,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   LoadingButton(
                     buttonKey: const Key('login_submit_button'),
                     label: l10n.login,

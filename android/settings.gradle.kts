@@ -14,6 +14,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url = uri("https://artifactory.2gis.dev/sdk-maven-release") }
     }
 }
 

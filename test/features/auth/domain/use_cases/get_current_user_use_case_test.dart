@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:smart_courier/core/error/failure.dart';
+import 'package:smart_courier/core/utils/result.dart';
 import 'package:smart_courier/features/auth/domain/entities/user.dart';
 import 'package:smart_courier/features/auth/domain/repositories/auth_repository.dart';
 import 'package:smart_courier/features/auth/domain/use_cases/get_current_user_use_case.dart';
@@ -21,26 +23,37 @@ void main() {
       email: 'courier@example.com',
       role: UserRole.courier,
     );
-    when(() => repository.getCurrentUser()).thenAnswer((_) async => user);
+    when(
+      () => repository.getCurrentUser(),
+    ).thenAnswer((_) async => const Success(user));
 
     final result = await useCase();
 
-    expect(result, user);
+    expect(result, isA<Success<User?>>());
+    expect((result as Success<User?>).data, user);
     verify(() => repository.getCurrentUser()).called(1);
   });
 
   test('returns null when no authenticated session exists', () async {
-    when(() => repository.getCurrentUser()).thenAnswer((_) async => null);
+    when(
+      () => repository.getCurrentUser(),
+    ).thenAnswer((_) async => const Success(null));
 
     final result = await useCase();
 
-    expect(result, isNull);
+    expect(result, isA<Success<User?>>());
+    expect((result as Success<User?>).data, isNull);
   });
 
   test('propagates a repository failure when session lookup fails', () async {
-    final failure = Exception('session lookup failed');
-    when(() => repository.getCurrentUser()).thenThrow(failure);
+    const failure = UnknownFailure();
+    when(
+      () => repository.getCurrentUser(),
+    ).thenAnswer((_) async => const ResultFailure(failure));
 
-    expect(() => useCase(), throwsA(same(failure)));
+    final result = await useCase();
+
+    expect(result, isA<ResultFailure<User?>>());
+    expect((result as ResultFailure<User?>).failure, failure);
   });
 }

@@ -9,6 +9,8 @@ class AppTextField extends StatelessWidget {
     this.obscureText = false,
     this.textCapitalization = TextCapitalization.none,
     this.validator,
+    this.onChanged,
+    this.maxLines = 1,
     super.key,
   });
 
@@ -19,6 +21,8 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final TextCapitalization textCapitalization;
   final FormFieldValidator<String>? validator;
+  final ValueChanged<String>? onChanged;
+  final int maxLines;
 
   static String? validateRequired(String? value, String errorMessage) {
     if (value == null || value.trim().isEmpty) {
@@ -37,6 +41,8 @@ class AppTextField extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       textCapitalization: textCapitalization,
+      maxLines: maxLines,
+      onChanged: onChanged,
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(labelText: labelText),
       validator: validator,

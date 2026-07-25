@@ -124,6 +124,12 @@ abstract class AppLocalizations {
   /// **'Password'**
   String get password;
 
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPassword;
+
   /// No description provided for @name.
   ///
   /// In en, this message translates to:
@@ -154,6 +160,30 @@ abstract class AppLocalizations {
   /// **'Create an account'**
   String get createAnAccount;
 
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address and we will send you a reset link if an account exists.'**
+  String get forgotPasswordDescription;
+
+  /// No description provided for @sendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get sendResetLink;
+
   /// No description provided for @emailRequired.
   ///
   /// In en, this message translates to:
@@ -166,6 +196,12 @@ abstract class AppLocalizations {
   /// **'Password is required'**
   String get passwordRequired;
 
+  /// No description provided for @confirmPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your password'**
+  String get confirmPasswordRequired;
+
   /// No description provided for @nameRequired.
   ///
   /// In en, this message translates to:
@@ -175,8 +211,104 @@ abstract class AppLocalizations {
   /// No description provided for @phoneRequired.
   ///
   /// In en, this message translates to:
-  /// **'Phone is required'**
+  /// **'Phone number is required'**
   String get phoneRequired;
+
+  /// No description provided for @phoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid phone number'**
+  String get phoneInvalid;
+
+  /// No description provided for @invalidEmailFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get invalidEmailFormat;
+
+  /// No description provided for @weakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters and contain at least 1 digit'**
+  String get weakPassword;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @passwordResetSent.
+  ///
+  /// In en, this message translates to:
+  /// **'If an account exists for this email, a reset link has been sent.'**
+  String get passwordResetSent;
+
+  /// No description provided for @passwordResetCheckEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get passwordResetCheckEmailTitle;
+
+  /// No description provided for @passwordResetNextSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the reset link in your email, set a new password, then sign in with it.'**
+  String get passwordResetNextSteps;
+
+  /// No description provided for @backToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get backToSignIn;
+
+  /// No description provided for @signInWithNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'If you updated your password, sign in with your new password.'**
+  String get signInWithNewPassword;
+
+  /// No description provided for @verifyEmailBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify your email'**
+  String get verifyEmailBanner;
+
+  /// No description provided for @resendVerificationEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend email'**
+  String get resendVerificationEmail;
+
+  /// No description provided for @verificationEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification email sent'**
+  String get verificationEmailSent;
+
+  /// No description provided for @resendVerificationCooldown.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend available in {seconds}s'**
+  String resendVerificationCooldown(int seconds);
+
+  /// No description provided for @dismissEmailVerificationBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss email verification reminder'**
+  String get dismissEmailVerificationBanner;
 
   /// No description provided for @customerHome.
   ///
@@ -207,6 +339,276 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout'**
   String get logout;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @splashConnectionIssueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection problem'**
+  String get splashConnectionIssueTitle;
+
+  /// No description provided for @splashConnectionIssueMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not verify your session. Check your internet connection and try again.'**
+  String get splashConnectionIssueMessage;
+
+  /// No description provided for @homeTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homeTab;
+
+  /// No description provided for @ordersTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get ordersTab;
+
+  /// No description provided for @newOrderTab.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newOrderTab;
+
+  /// No description provided for @profileTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTab;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @availableOrdersTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get availableOrdersTab;
+
+  /// No description provided for @activeDeliveryTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get activeDeliveryTab;
+
+  /// No description provided for @earningsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Earnings'**
+  String get earningsTab;
+
+  /// No description provided for @adminDashboardTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get adminDashboardTab;
+
+  /// No description provided for @adminOrdersTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get adminOrdersTab;
+
+  /// No description provided for @adminCouriersTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Couriers'**
+  String get adminCouriersTab;
+
+  /// No description provided for @createNewOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new order'**
+  String get createNewOrder;
+
+  /// No description provided for @activeOrderOnTheWay.
+  ///
+  /// In en, this message translates to:
+  /// **'Order on the way'**
+  String get activeOrderOnTheWay;
+
+  /// No description provided for @activeOrderEta.
+  ///
+  /// In en, this message translates to:
+  /// **'Courier arrives in {minutes} min'**
+  String activeOrderEta(int minutes);
+
+  /// No description provided for @recentSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get recentSectionTitle;
+
+  /// No description provided for @recentOrdersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed orders yet.'**
+  String get recentOrdersEmpty;
+
+  /// No description provided for @customerOrdersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders yet. Your delivery history will appear here.'**
+  String get customerOrdersEmpty;
+
+  /// No description provided for @ordersFilterHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter orders'**
+  String get ordersFilterHint;
+
+  /// No description provided for @newOrderComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Order creation flow coming soon.'**
+  String get newOrderComingSoon;
+
+  /// No description provided for @availableOrdersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No open orders nearby right now.'**
+  String get availableOrdersEmpty;
+
+  /// No description provided for @courierSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search available orders'**
+  String get courierSearchHint;
+
+  /// No description provided for @activeDeliveryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No active delivery. Accept an order to start.'**
+  String get activeDeliveryEmpty;
+
+  /// No description provided for @activeDeliveryNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery note'**
+  String get activeDeliveryNoteHint;
+
+  /// No description provided for @earningsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No earnings yet. Completed deliveries will appear here.'**
+  String get earningsEmpty;
+
+  /// No description provided for @adminDashboardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Live map dashboard coming soon.'**
+  String get adminDashboardEmpty;
+
+  /// No description provided for @adminOrdersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders to manage yet.'**
+  String get adminOrdersEmpty;
+
+  /// No description provided for @adminCouriersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No couriers to display yet.'**
+  String get adminCouriersEmpty;
+
+  /// No description provided for @mapUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Map unavailable. Add your 2GIS key to assets/keys/dgissdk.key or enter addresses manually.'**
+  String get mapUnavailable;
+
+  /// No description provided for @newOrderPickupSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup'**
+  String get newOrderPickupSection;
+
+  /// No description provided for @newOrderDropoffSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop-off'**
+  String get newOrderDropoffSection;
+
+  /// No description provided for @pickupAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup address'**
+  String get pickupAddressLabel;
+
+  /// No description provided for @dropoffAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop-off address'**
+  String get dropoffAddressLabel;
+
+  /// No description provided for @orderNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Package note (optional)'**
+  String get orderNoteLabel;
+
+  /// No description provided for @createOrderButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create order'**
+  String get createOrderButton;
+
+  /// No description provided for @pickFromMapPickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Use map center for pickup'**
+  String get pickFromMapPickup;
+
+  /// No description provided for @pickFromMapDropoff.
+  ///
+  /// In en, this message translates to:
+  /// **'Use map center for drop-off'**
+  String get pickFromMapDropoff;
+
+  /// No description provided for @orderStatusCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get orderStatusCreated;
+
+  /// No description provided for @orderStatusAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get orderStatusAccepted;
+
+  /// No description provided for @orderStatusPickedUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked up'**
+  String get orderStatusPickedUp;
+
+  /// No description provided for @orderStatusDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get orderStatusDelivered;
+
+  /// No description provided for @orderStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get orderStatusCompleted;
+
+  /// No description provided for @orderStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get orderStatusCancelled;
 }
 
 class _AppLocalizationsDelegate

@@ -11,7 +11,25 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    match /orders/{orderId} {
+      allow read: if isSignedIn() && (
+        resource.data.customerId == request.auth.uid ||
+        resource.data.courierId == request.auth.uid
+      );
+
+      allow create: if isSignedIn()
+        && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.status == 'created';
+
+      allow update: if false;
+      allow delete: if false;
+    }
   }
+}
+
+function isSignedIn() {
+  return request.auth != null;
 }
 
 function isOwner(userId) {

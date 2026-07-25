@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:smart_courier/core/error/failure.dart';
+import 'package:smart_courier/core/utils/result.dart';
 import 'package:smart_courier/features/auth/domain/repositories/auth_repository.dart';
 import 'package:smart_courier/features/auth/domain/use_cases/logout_use_case.dart';
 
@@ -15,17 +17,25 @@ void main() {
   });
 
   test('completes when the repository clears the session', () async {
-    when(() => repository.logout()).thenAnswer((_) async {});
+    when(
+      () => repository.logout(),
+    ).thenAnswer((_) async => const Success(Unit.value));
 
-    await useCase();
+    final result = await useCase();
 
+    expect(result, isA<Success<Unit>>());
     verify(() => repository.logout()).called(1);
   });
 
   test('propagates a repository failure when logout fails', () async {
-    final failure = Exception('logout failed');
-    when(() => repository.logout()).thenThrow(failure);
+    const failure = UnknownFailure();
+    when(
+      () => repository.logout(),
+    ).thenAnswer((_) async => const ResultFailure(failure));
 
-    expect(() => useCase(), throwsA(same(failure)));
+    final result = await useCase();
+
+    expect(result, isA<ResultFailure<Unit>>());
+    expect((result as ResultFailure<Unit>).failure, failure);
   });
 }

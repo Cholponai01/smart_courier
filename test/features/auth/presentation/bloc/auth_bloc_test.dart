@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:smart_courier/core/error/failure.dart';
+import 'package:smart_courier/core/utils/result.dart';
 import 'package:smart_courier/features/auth/domain/entities/user.dart';
 import 'package:smart_courier/features/auth/domain/use_cases/get_current_user_use_case.dart';
 import 'package:smart_courier/features/auth/domain/use_cases/login_use_case.dart';
@@ -48,21 +49,40 @@ void main() {
   blocTest<AuthBloc, AuthState>(
     'emits Authenticated when session check finds a user',
     build: () {
-      when(() => getCurrentUserUseCase()).thenAnswer((_) async => user);
+      when(
+        () => getCurrentUserUseCase(),
+      ).thenAnswer((_) async => const Success(user));
       return buildBloc();
     },
     act: (bloc) => bloc.add(const AuthCheckRequested()),
-    expect: () => [const AuthLoading(), Authenticated(user)],
+    expect: () => [const AuthChecking(), Authenticated(user)],
   );
 
   blocTest<AuthBloc, AuthState>(
     'emits Unauthenticated when session check finds no user',
     build: () {
-      when(() => getCurrentUserUseCase()).thenAnswer((_) async => null);
+      when(
+        () => getCurrentUserUseCase(),
+      ).thenAnswer((_) async => const Success(null));
       return buildBloc();
     },
     act: (bloc) => bloc.add(const AuthCheckRequested()),
-    expect: () => [const AuthLoading(), const Unauthenticated()],
+    expect: () => [const AuthChecking(), const Unauthenticated()],
+  );
+
+  blocTest<AuthBloc, AuthState>(
+    'emits AuthError when session check fails',
+    build: () {
+      when(
+        () => getCurrentUserUseCase(),
+      ).thenAnswer((_) async => const ResultFailure(UnknownFailure()));
+      return buildBloc();
+    },
+    act: (bloc) => bloc.add(const AuthCheckRequested()),
+    expect: () => [
+      const AuthChecking(),
+      const AuthError('Something went wrong. Please try again.'),
+    ],
   );
 
   blocTest<AuthBloc, AuthState>(
@@ -70,7 +90,7 @@ void main() {
     build: () {
       when(
         () => loginUseCase(email: email, password: password),
-      ).thenAnswer((_) async => user);
+      ).thenAnswer((_) async => const Success(user));
       return buildBloc();
     },
     act: (bloc) =>
@@ -83,7 +103,7 @@ void main() {
     build: () {
       when(
         () => loginUseCase(email: email, password: password),
-      ).thenThrow(const AuthFailure());
+      ).thenAnswer((_) async => const ResultFailure(AuthFailure()));
       return buildBloc();
     },
     act: (bloc) =>
@@ -104,7 +124,7 @@ void main() {
           name: name,
           phone: phone,
         ),
-      ).thenAnswer((_) async => user);
+      ).thenAnswer((_) async => const Success(user));
       return buildBloc();
     },
     act: (bloc) => bloc.add(
@@ -128,8 +148,10 @@ void main() {
           name: name,
           phone: phone,
         ),
-      ).thenThrow(
-        const ValidationFailure('An account with this email already exists'),
+      ).thenAnswer(
+        (_) async => const ResultFailure(
+          ValidationFailure('An account with this email already exists'),
+        ),
       );
       return buildBloc();
     },
@@ -150,7 +172,9 @@ void main() {
   blocTest<AuthBloc, AuthState>(
     'emits Unauthenticated when logout succeeds',
     build: () {
-      when(() => logoutUseCase()).thenAnswer((_) async {});
+      when(
+        () => logoutUseCase(),
+      ).thenAnswer((_) async => const Success(Unit.value));
       return buildBloc();
     },
     act: (bloc) => bloc.add(const LogoutRequested()),
@@ -160,7 +184,9 @@ void main() {
   blocTest<AuthBloc, AuthState>(
     'emits AuthError when logout fails',
     build: () {
-      when(() => logoutUseCase()).thenThrow(const UnknownFailure());
+      when(
+        () => logoutUseCase(),
+      ).thenAnswer((_) async => const ResultFailure(UnknownFailure()));
       return buildBloc();
     },
     act: (bloc) => bloc.add(const LogoutRequested()),

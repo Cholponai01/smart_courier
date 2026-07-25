@@ -11,6 +11,8 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+# Real 2GIS key — obtain at dev.2gis.ru and save as assets/keys/dgissdk.key
+assets/keys/dgissdk.key
 
 # IntelliJ related
 *.iml

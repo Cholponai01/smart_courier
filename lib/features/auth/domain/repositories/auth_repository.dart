@@ -1,17 +1,22 @@
+import 'package:smart_courier/core/utils/result.dart';
 import 'package:smart_courier/features/auth/domain/entities/user.dart';
 
 abstract interface class AuthRepository {
   /// Creates an account whose initial role is [UserRole.customer].
-  Future<User> register({
+  Future<Result<User>> register({
     required String email,
     required String password,
     required String name,
     required String phone,
   });
 
-  Future<User> login({required String email, required String password});
+  Future<Result<User>> login({required String email, required String password});
 
-  Future<void> logout();
+  Future<Result<Unit>> logout();
 
-  Future<User?> getCurrentUser();
+  Future<Result<User?>> getCurrentUser();
+
+  Future<Result<Unit>> sendPasswordResetEmail({required String email});
+
+  Future<Result<Unit>> sendEmailVerification();
 }

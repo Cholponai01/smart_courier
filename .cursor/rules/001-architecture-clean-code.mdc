@@ -41,10 +41,13 @@ alwaysApply: true
 - No `print()`. Use the project logger (`core/logging/`).
 - Immutability: domain entities and Bloc states use `Equatable` (or
   `freezed`) and are `final`/const-constructible. No mutable public fields.
-- Errors are typed: data-layer throws are caught and mapped to a sealed
+- Errors are typed: data-layer catches are mapped to a sealed
   `Failure` (`NetworkFailure`, `AuthFailure`, `ValidationFailure`,
-  `UnknownFailure`) before reaching the Bloc. Presentation never catches
-  raw `FirebaseException`.
+  `UnknownFailure`) and returned as `ResultFailure<T>` — never thrown
+  above the data layer. Every repository/use-case method returns
+  `Future<Result<T>>` (use `Result<Unit>` for void-like operations).
+  Presentation (Bloc) switches on `Success` / `ResultFailure` and never
+  catches raw `FirebaseException` or inspects `Failure` subtypes.
 - DRY, but do not over-abstract a pattern used only once — duplication of
   2 call sites is cheaper than a wrong abstraction (YAGNI).
 

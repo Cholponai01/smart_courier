@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:smart_courier/core/error/failure.dart';
+import 'package:smart_courier/core/utils/result.dart';
 import 'package:smart_courier/features/auth/domain/entities/user.dart';
 import 'package:smart_courier/features/auth/domain/repositories/auth_repository.dart';
 import 'package:smart_courier/features/auth/domain/use_cases/login_use_case.dart';
@@ -22,23 +24,24 @@ void main() {
   test('returns the authenticated user when credentials are valid', () async {
     when(
       () => repository.login(email: email, password: password),
-    ).thenAnswer((_) async => user);
+    ).thenAnswer((_) async => Success(user));
 
     final result = await useCase(email: email, password: password);
 
-    expect(result, user);
+    expect(result, isA<Success<User>>());
+    expect((result as Success<User>).data, user);
     verify(() => repository.login(email: email, password: password)).called(1);
   });
 
   test('propagates a repository failure when login fails', () async {
-    final failure = Exception('invalid credentials');
+    const failure = AuthFailure();
     when(
       () => repository.login(email: email, password: password),
-    ).thenThrow(failure);
+    ).thenAnswer((_) async => const ResultFailure(failure));
 
-    expect(
-      () => useCase(email: email, password: password),
-      throwsA(same(failure)),
-    );
+    final result = await useCase(email: email, password: password);
+
+    expect(result, isA<ResultFailure<User>>());
+    expect((result as ResultFailure<User>).failure, failure);
   });
 }

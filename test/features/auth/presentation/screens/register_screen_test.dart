@@ -17,6 +17,16 @@ import '../../../../helpers/pump_localized_widget.dart';
 
 class MockAuthBloc extends MockBloc<AuthEvent, AuthState> implements AuthBloc {}
 
+Future<void> _enterPhoneNumber(WidgetTester tester, String number) async {
+  await tester.enterText(
+    find.descendant(
+      of: find.byKey(const Key('register_phone_field')),
+      matching: find.byType(TextFormField),
+    ),
+    number,
+  );
+}
+
 void main() {
   late MockAuthBloc authBloc;
 
@@ -67,12 +77,78 @@ void main() {
 
     await pumpLocalizedWidget(tester, buildSubject());
     await tester.tap(find.byKey(const Key('register_submit_button')));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text('Name is required'), findsOneWidget);
-    expect(find.text('Phone is required'), findsOneWidget);
+    expect(find.textContaining('Phone'), findsOneWidget);
     expect(find.text('Email is required'), findsOneWidget);
     expect(find.text('Password is required'), findsOneWidget);
+    expect(find.text('Please confirm your password'), findsOneWidget);
+    verifyNever(() => authBloc.add(any()));
+  });
+
+  testWidgets('shows weak password validation message', (tester) async {
+    whenListen(
+      authBloc,
+      const Stream<AuthState>.empty(),
+      initialState: const Unauthenticated(),
+    );
+
+    await pumpLocalizedWidget(tester, buildSubject());
+    await tester.enterText(
+      find.byKey(const Key('register_name_field')),
+      'Test User',
+    );
+    await _enterPhoneNumber(tester, '5551234567');
+    await tester.enterText(
+      find.byKey(const Key('register_email_field')),
+      'user@example.com',
+    );
+    await tester.enterText(
+      find.byKey(const Key('register_password_field')),
+      'password',
+    );
+    await tester.enterText(
+      find.byKey(const Key('register_confirm_password_field')),
+      'password',
+    );
+    await tester.tap(find.byKey(const Key('register_submit_button')));
+    await tester.pump();
+
+    expect(
+      find.text(
+        'Password must be at least 8 characters and contain at least 1 digit',
+      ),
+      findsOneWidget,
+    );
+    verifyNever(() => authBloc.add(any()));
+  });
+
+  testWidgets('shows password mismatch only after full confirm is entered', (
+    tester,
+  ) async {
+    whenListen(
+      authBloc,
+      const Stream<AuthState>.empty(),
+      initialState: const Unauthenticated(),
+    );
+
+    await pumpLocalizedWidget(tester, buildSubject());
+    await tester.enterText(
+      find.byKey(const Key('register_password_field')),
+      'password1',
+    );
+
+    final confirmField = find.byKey(
+      const Key('register_confirm_password_field'),
+    );
+    await tester.enterText(confirmField, 'pass');
+    await tester.pump();
+    expect(find.text('Passwords do not match'), findsNothing);
+
+    await tester.enterText(confirmField, 'password2');
+    await tester.pump();
+    expect(find.text('Passwords do not match'), findsOneWidget);
     verifyNever(() => authBloc.add(any()));
   });
 
@@ -90,17 +166,18 @@ void main() {
       find.byKey(const Key('register_name_field')),
       'Test User',
     );
-    await tester.enterText(
-      find.byKey(const Key('register_phone_field')),
-      '+10000000000',
-    );
+    await _enterPhoneNumber(tester, '5551234567');
     await tester.enterText(
       find.byKey(const Key('register_email_field')),
       'user@example.com',
     );
     await tester.enterText(
       find.byKey(const Key('register_password_field')),
-      'password',
+      'password1',
+    );
+    await tester.enterText(
+      find.byKey(const Key('register_confirm_password_field')),
+      'password1',
     );
     await tester.tap(find.byKey(const Key('register_submit_button')));
     await tester.pump();
@@ -109,9 +186,9 @@ void main() {
       () => authBloc.add(
         const RegisterRequested(
           email: 'user@example.com',
-          password: 'password',
+          password: 'password1',
           name: 'Test User',
-          phone: '+10000000000',
+          phone: '+15551234567',
         ),
       ),
     ).called(1);
@@ -143,6 +220,7 @@ void main() {
       id: 'user-id',
       email: 'user@example.com',
       role: UserRole.customer,
+      emailVerified: true,
     );
     final stateController = StreamController<AuthState>.broadcast();
 
@@ -173,6 +251,6 @@ void main() {
 
     expect(find.byType(RegisterScreen), findsNothing);
     expect(find.byType(CustomerShell), findsOneWidget);
-    expect(router.state.matchedLocation, AppRoutes.customer);
+    expect(router.state.matchedLocation, AppRoutes.customerHome);
   });
 }

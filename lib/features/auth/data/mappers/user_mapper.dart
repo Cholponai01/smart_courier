@@ -9,11 +9,12 @@ abstract final class UserMapper {
     required String id,
     required String email,
     required Map<String, dynamic> data,
+    bool emailVerified = false,
   }) {
     final roleValue = data[AuthFirestoreFields.role] as String?;
     final role = _parseRole(roleValue);
 
-    return User(id: id, email: email, role: role);
+    return User(id: id, email: email, role: role, emailVerified: emailVerified);
   }
 
   static UserDto toDto({

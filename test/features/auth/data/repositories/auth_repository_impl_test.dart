@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 import 'package:smart_courier/core/error/failure.dart';
+import 'package:smart_courier/core/utils/result.dart';
 import 'package:smart_courier/features/auth/data/constants/auth_error_messages.dart';
 import 'package:smart_courier/features/auth/data/constants/auth_firestore_fields.dart';
 import 'package:smart_courier/features/auth/data/repositories/auth_repository_impl.dart';
@@ -25,13 +26,15 @@ void main() {
         firestore: firestore,
       );
 
-      final user = await repository.register(
+      final result = await repository.register(
         email: email,
         password: password,
         name: name,
         phone: phone,
       );
 
+      expect(result, isA<Success<User>>());
+      final user = (result as Success<User>).data;
       expect(user.email, email);
       expect(user.role, UserRole.customer);
 
@@ -58,21 +61,17 @@ void main() {
         firestore: FakeFirebaseFirestore(),
       );
 
-      expect(
-        () => repository.register(
-          email: email,
-          password: password,
-          name: name,
-          phone: phone,
-        ),
-        throwsA(
-          isA<ValidationFailure>().having(
-            (failure) => failure.message,
-            'message',
-            AuthErrorMessages.emailAlreadyInUse,
-          ),
-        ),
+      final result = await repository.register(
+        email: email,
+        password: password,
+        name: name,
+        phone: phone,
       );
+
+      expect(result, isA<ResultFailure<User>>());
+      final failure = (result as ResultFailure<User>).failure;
+      expect(failure, isA<EmailAlreadyInUseFailure>());
+      expect(failure.message, AuthErrorMessages.emailAlreadyInUse);
     });
   });
 
@@ -97,8 +96,10 @@ void main() {
         firestore: firestore,
       );
 
-      final user = await repository.login(email: email, password: password);
+      final result = await repository.login(email: email, password: password);
 
+      expect(result, isA<Success<User>>());
+      final user = (result as Success<User>).data;
       expect(user.id, userId);
       expect(user.role, UserRole.courier);
     });
@@ -116,16 +117,15 @@ void main() {
         firestore: FakeFirebaseFirestore(),
       );
 
-      expect(
-        () => repository.login(email: email, password: 'bad-password'),
-        throwsA(
-          isA<AuthFailure>().having(
-            (failure) => failure.message,
-            'message',
-            AuthErrorMessages.incorrectCredentials,
-          ),
-        ),
+      final result = await repository.login(
+        email: email,
+        password: 'bad-password',
       );
+
+      expect(result, isA<ResultFailure<User>>());
+      final failure = (result as ResultFailure<User>).failure;
+      expect(failure, isA<AuthFailure>());
+      expect(failure.message, AuthErrorMessages.incorrectCredentials);
     });
   });
 
@@ -136,9 +136,10 @@ void main() {
         firestore: FakeFirebaseFirestore(),
       );
 
-      final user = await repository.getCurrentUser();
+      final result = await repository.getCurrentUser();
 
-      expect(user, isNull);
+      expect(result, isA<Success<User?>>());
+      expect((result as Success<User?>).data, isNull);
     });
 
     test('returns persisted user profile for active session', () async {
@@ -162,8 +163,10 @@ void main() {
         firestore: firestore,
       );
 
-      final user = await repository.getCurrentUser();
+      final result = await repository.getCurrentUser();
 
+      expect(result, isA<Success<User?>>());
+      final user = (result as Success<User?>).data;
       expect(user?.role, UserRole.admin);
       expect(user?.email, email);
     });
@@ -180,9 +183,27 @@ void main() {
         firestore: FakeFirebaseFirestore(),
       );
 
-      await repository.logout();
+      final result = await repository.logout();
 
+      expect(result, isA<Success<Unit>>());
       expect(auth.currentUser, isNull);
+    });
+  });
+
+  group('sendPasswordResetEmail', () {
+    test('returns success even when account does not exist', () async {
+      final auth = MockFirebaseAuth();
+      whenCalling(
+        Invocation.method(#sendPasswordResetEmail, null, {#email: email}),
+      ).on(auth).thenThrow(FirebaseAuthException(code: 'user-not-found'));
+      final repository = AuthRepositoryImpl(
+        firebaseAuth: auth,
+        firestore: FakeFirebaseFirestore(),
+      );
+
+      final result = await repository.sendPasswordResetEmail(email: email);
+
+      expect(result, isA<Success<Unit>>());
     });
   });
 }
